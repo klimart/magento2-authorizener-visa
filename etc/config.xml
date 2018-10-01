@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <codiluck_authorizenet>
+                <title>CodiLuck Authorize.NET Visa Payment</title>
+
+                <can_initialize>1</can_initialize>
+
+                <paymentInfoKeys>cart_type,exp_date</paymentInfoKeys>
+                <sdk_url_sandbox>https://sandbox-assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js</sdk_url_sandbox>
+                <sdk_url>https://assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js</sdk_url>
+                <checkout_button_src_sandbox>https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png</checkout_button_src_sandbox>
+                <checkout_button_src>https://secure.checkout.visa.com/wallet-services-web/xo/button.png</checkout_button_src>
+                <payment_card_src>https://assets.secure.checkout.visa.com/VCO/images/acc_49x31_wht01.png</payment_card_src>
+
+                <merchant_source_id>Merchant Defined Source ID</merchant_source_id>
+                <api_key_sandbox>TKZHFTUS0G7T2UCVN4WZ21C4mJbMMkWV1g7SANgqCDhZwrReA</api_key_sandbox>
+                <api_key />
+
+                <review_message>Custom Review Message</review_message>
+                <button_action_title>Pay</button_action_title>
+                <is_collect_shipping>1</is_collect_shipping>
+                <display_name>CodiLuck Consulting Ltd.</display_name>
+            </codiluck_authorizenet>
+        </payment>
+    </default>
+</config>

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Authorize.NET Visa Payment Information Management -->
+    <preference for="CodiLuck\AuthorizenetVisa\Api\PaymentInformationManagementInterface" type="CodiLuck\AuthorizenetVisa\Service\PaymentInformationManagement"/>
+    <type name="CodiLuck\AuthorizenetVisa\Service\PaymentInformationManagement">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">CodiLuckAuthorizenetCommandPool</argument>
+        </arguments>
+    </type>
+
+    <!-- Authorize.NET CommandPool -->
+    <virtualType name="CodiLuckAuthorizenetCommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <!-- Initialize works if in config initialize=1, otherwise authorize_capture will be triggered -->
+                <item name="initialize" xsi:type="string">CodiLuck\AuthorizenetVisa\Gateway\Command\InitializeCommand</item>
+                <item name="visa_complete" xsi:type="string">CodiLuck\AuthorizenetVisa\Gateway\Command\CompleteCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize.NET Visa Decrypt Transaction Builder Composite -->
+    <virtualType name="CodiLuckAuthorizenetVisaDecryptBuilderComposite" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="decrypt" xsi:type="string">CodiLuck\AuthorizenetVisa\Gateway\Request\DecryptBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize.NET Visa Complete Command -->
+    <type name="CodiLuck\AuthorizenetVisa\Gateway\Command\CompleteCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">CodiLuckAuthorizenetVisaDecryptBuilderComposite</argument>
+            <argument name="transferFactory" xsi:type="object">CodiLuck\Authorizenet\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">CodiLuck\AuthorizenetVisa\Gateway\Http\Client</argument>
+            <argument name="validator" xsi:type="object">CodiLuck\AuthorizenetVisa\Gateway\Validator\GeneralResponseValidator</argument>
+            <argument name="handler" xsi:type="object">CodiLuckAuthorizenetVisaDecryptHandler</argument>
+        </arguments>
+    </type>
+
+    <!-- Authorize.NET Visa HTTP Client -->
+    <type name="CodiLuck\AuthorizenetVisa\Gateway\Http\Client">
+        <arguments>
+            <argument name="logger" xsi:type="object">CodiLuckAuthorizenetLogger</argument>
+            <argument name="converter" xsi:type="object">CodiLuck\Authorizenet\Gateway\Converter\JsonToArray</argument>
+        </arguments>
+    </type>
+
+    <!-- Authorize.NET Visa Decrypt Handler -->
+    <virtualType name="CodiLuckAuthorizenetVisaDecryptHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="payment_details" xsi:type="string">CodiLuck\AuthorizenetVisa\Gateway\Response\PaymentDetailsHandler</item>
+                <item name="order_details" xsi:type="string">CodiLuck\AuthorizenetVisa\Gateway\Response\UpdateOrderHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize.NET Value Handler Pool -->
+    <virtualType name="CodiLuckAuthorizenetValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="can_initialize" xsi:type="string">CodiLuckAuthorizenetVisaConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize.NET Visa Value Handler -->
+    <virtualType name="CodiLuckAuthorizenetVisaConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CodiLuck\AuthorizenetVisa\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize.NET Visa Gateway Config -->
+    <virtualType name="CodiLuck\AuthorizenetVisa\Gateway\Config\Config" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="string">codiluck_authorizenet</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize.NET Visa Payment Gateway Config -->
+    <type name="CodiLuck\AuthorizenetVisa\Gateway\Config">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">CodiLuckAuthorizenetValueHandlerPool</argument>
+        </arguments>
+    </type>
+</config>
